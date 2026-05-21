@@ -1,0 +1,43 @@
+services:
+  db:
+    image: postgres:18.4-alpine3.23
+    container_name: postgresql
+    environment:
+      POSTGRES_DB: "sellers_db"
+      POSTGRES_USER: "admin"
+      POSTGRES_PASSWORD: "12345678"
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    volumes:
+      - ./src/main/resources:/docker-entrypoint-initdb.d
+      - sellers_db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d sellers_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+
+  app:
+    build: .
+    container_name: sellers-rest-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/sellers_db
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: "12345678"
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  sellers_db-data:
