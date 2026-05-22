@@ -7,13 +7,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.magzook.sellersrestservice.dto.enums.TimePeriod;
-import ru.magzook.sellersrestservice.dto.response.SellerWithTotalDto;
 import ru.magzook.sellersrestservice.dto.response.SellerWithTotalListDto;
 import ru.magzook.sellersrestservice.service.AnalyticsService;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/analytics")

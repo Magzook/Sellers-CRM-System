@@ -9,7 +9,6 @@ import ru.magzook.sellersrestservice.entity.Seller;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 // we don't want any CRUD methods here, so we extend the base Repository interface
