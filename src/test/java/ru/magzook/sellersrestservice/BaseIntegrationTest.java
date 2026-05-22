@@ -26,7 +26,7 @@ public abstract class BaseIntegrationTest {
     @Autowired
     private SellerRepository sellerRepository;
 
-    protected final String baseUrl = "/api/v1";
+    protected static final String baseUrl = "/api/v1";
 
     @AfterEach
     void cleanup() {

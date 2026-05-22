@@ -8,11 +8,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class TransactionControllerTest extends BaseIntegrationTest {
 
+    private static final String transactionsUrl = baseUrl + "/transactions";
+
     @Test
     void createTransaction_success() throws Exception {
         int sellerId = helper.createSeller("Bob", "bob@mail.com");
 
-        mockMvc.perform(post(baseUrl + "/transactions")
+        mockMvc.perform(post(transactionsUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"amount": 100.50, "paymentType": "CASH", "sellerId": %d}
@@ -29,7 +31,7 @@ class TransactionControllerTest extends BaseIntegrationTest {
     void createTransaction_negativeAmount_returns400() throws Exception {
         int sellerId = helper.createSeller("Bob", "bob@mail.com");
 
-        mockMvc.perform(post(baseUrl + "/transactions")
+        mockMvc.perform(post(transactionsUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"amount": -1, "paymentType": "CASH", "sellerId": %d}
@@ -44,7 +46,7 @@ class TransactionControllerTest extends BaseIntegrationTest {
     void createTransaction_invalidPaymentType_returns400() throws Exception {
         int sellerId = helper.createSeller("Bob", "bob@mail.com");
 
-        mockMvc.perform(post(baseUrl + "/transactions")
+        mockMvc.perform(post(transactionsUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"amount": 100, "paymentType": "BITCOIN", "sellerId": %d}
@@ -57,7 +59,7 @@ class TransactionControllerTest extends BaseIntegrationTest {
 
     @Test
     void createTransaction_sellerNotFound_returns404() throws Exception {
-        mockMvc.perform(post(baseUrl + "/transactions")
+        mockMvc.perform(post(transactionsUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"amount": 100, "paymentType": "CASH", "sellerId": 999}
@@ -71,7 +73,7 @@ class TransactionControllerTest extends BaseIntegrationTest {
         int sellerId = helper.createSeller("Bob", "bob@mail.com");
         int txId = helper.createTransaction(100, "CARD", sellerId);
 
-        mockMvc.perform(get(baseUrl + "/transactions/{id}", txId))
+        mockMvc.perform(get(transactionsUrl + "/{id}", txId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").isNotEmpty())
                 .andExpect(jsonPath("$.amount").value(100))
@@ -111,7 +113,7 @@ class TransactionControllerTest extends BaseIntegrationTest {
 
     @Test
     void getTransaction_notFound_returns404() throws Exception {
-        mockMvc.perform(get(baseUrl + "/transactions/{id}", 999))
+        mockMvc.perform(get(transactionsUrl + "/{id}", 999))
                 .andExpect(status().isNotFound());
     }
 }

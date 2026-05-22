@@ -9,11 +9,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class SellerControllerTest extends BaseIntegrationTest {
 
+    private static final String sellersUrl = baseUrl + "/sellers";
+
     @Test
     void createSeller_success() throws Exception {
         String name = "John";
         String contactInfo = "john@mail.com";
-        mockMvc.perform(post(baseUrl + "/sellers")
+        mockMvc.perform(post(sellersUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"name": "%s", "contactInfo": "%s"}
@@ -27,7 +29,7 @@ class SellerControllerTest extends BaseIntegrationTest {
 
     @Test
     void createSeller_nameIsBlank_returns400() throws Exception {
-        mockMvc.perform(post(baseUrl + "/sellers")
+        mockMvc.perform(post(sellersUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"name": "", "contactInfo": "john@mail.com"}
@@ -40,7 +42,7 @@ class SellerControllerTest extends BaseIntegrationTest {
 
     @Test
     void createSeller_nameIsTooLong_returns400() throws Exception {
-        mockMvc.perform(post(baseUrl + "/sellers")
+        mockMvc.perform(post(sellersUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"name": "AAAAAAAAAAAAAAAAAAAAAAAAA", "contactInfo": "john@mail.com"}
@@ -53,7 +55,7 @@ class SellerControllerTest extends BaseIntegrationTest {
 
     @Test
     void createSeller_contactInfoIsBlank_returns400() throws Exception {
-        mockMvc.perform(post(baseUrl + "/sellers")
+        mockMvc.perform(post(sellersUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"name": "John", "contactInfo": "  "}
@@ -73,7 +75,7 @@ class SellerControllerTest extends BaseIntegrationTest {
             helper.createSeller(names[i], contactInfos[i]);
         }
 
-        mockMvc.perform(get(baseUrl + "/sellers"))
+        mockMvc.perform(get(sellersUrl))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.sellers.length()").value(count))
                 .andExpect(jsonPath("$.sellers[*].name", containsInAnyOrder(names)))
@@ -88,7 +90,7 @@ class SellerControllerTest extends BaseIntegrationTest {
         String contactInfo = "alice@mail.com";
         int id = helper.createSeller(name, contactInfo);
 
-        mockMvc.perform(get(baseUrl + "/sellers/{id}", id))
+        mockMvc.perform(get(sellersUrl + "/{id}", id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(id))
                 .andExpect(jsonPath("$.name").value(name))
@@ -98,7 +100,7 @@ class SellerControllerTest extends BaseIntegrationTest {
 
     @Test
     void findSellerById_notFound_returns404() throws Exception {
-        mockMvc.perform(get(baseUrl + "/sellers/{id}", 999))
+        mockMvc.perform(get(sellersUrl + "/{id}", 999))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("seller with id 999 not found"))
                 .andExpect(jsonPath("$.timestamp").isNotEmpty())
@@ -113,7 +115,7 @@ class SellerControllerTest extends BaseIntegrationTest {
         String newContactInfo = "henryrschrader@mail.com";
         int id = helper.createSeller(oldName, oldContactInfo);
 
-        mockMvc.perform(put(baseUrl + "/sellers/{id}", id)
+        mockMvc.perform(put(sellersUrl + "/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"name": "%s", "contactInfo": "%s"}
@@ -129,7 +131,7 @@ class SellerControllerTest extends BaseIntegrationTest {
     void updateSeller_nameIsBlank_returns400() throws Exception {
         int id = helper.createSeller("OldName", "old@mail.com");
 
-        mockMvc.perform(put(baseUrl + "/sellers/{id}", id)
+        mockMvc.perform(put(sellersUrl + "/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"name": "   ", "contactInfo": "john@mail.com"}
@@ -144,7 +146,7 @@ class SellerControllerTest extends BaseIntegrationTest {
     void updateSeller_nameIsTooLong_returns400() throws Exception {
         int id = helper.createSeller("OldName", "old@mail.com");
 
-        mockMvc.perform(put(baseUrl + "/sellers/{id}", id)
+        mockMvc.perform(put(sellersUrl + "/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"name": "AAAAAAAAAAAAAAAAAAAAAAA", "contactInfo": "john@mail.com"}
@@ -159,7 +161,7 @@ class SellerControllerTest extends BaseIntegrationTest {
     void updateSeller_contactInfoIsBlank_returns400() throws Exception {
         int id = helper.createSeller("OldName", "old@mail.com");
 
-        mockMvc.perform(put(baseUrl + "/sellers/{id}", id)
+        mockMvc.perform(put(sellersUrl + "/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"name": "newName", "contactInfo": ""}
@@ -172,7 +174,7 @@ class SellerControllerTest extends BaseIntegrationTest {
 
     @Test
     void updateSeller_notFound_returns404() throws Exception {
-        mockMvc.perform(put(baseUrl + "/sellers/{id}", 999)
+        mockMvc.perform(put(sellersUrl + "/{id}", 999)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"name": "someName", "contactInfo": "someContactInfo"}
@@ -187,13 +189,13 @@ class SellerControllerTest extends BaseIntegrationTest {
     void deleteSeller_success() throws Exception {
         int id = helper.createSeller("ToDelete", "del@mail.com");
 
-        mockMvc.perform(delete(baseUrl + "/sellers/{id}", id))
+        mockMvc.perform(delete(sellersUrl + "/{id}", id))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(get(baseUrl + "/sellers/{id}", id))
+        mockMvc.perform(get(sellersUrl + "/{id}", id))
                 .andExpect(status().isNotFound());
 
-        mockMvc.perform(get(baseUrl + "/sellers"))
+        mockMvc.perform(get(sellersUrl))
                 .andExpect(jsonPath("$.sellers.length()").value(0));
     }
 }
