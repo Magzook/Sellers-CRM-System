@@ -1,7 +1,6 @@
 package ru.magzook.sellersrestservice;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -9,11 +8,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class SellerControllerTest extends BaseIntegrationTest {
-
-    @Autowired
-    private TestHelper helper;
-
-    private final String baseUrl = "/api/v1";
 
     @Test
     void createSeller_success() throws Exception {

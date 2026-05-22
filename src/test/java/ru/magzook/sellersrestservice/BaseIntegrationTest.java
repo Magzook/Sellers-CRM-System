@@ -8,7 +8,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.magzook.sellersrestservice.repository.SellerRepository;
 import ru.magzook.sellersrestservice.repository.TransactionRepository;
-import tools.jackson.databind.ObjectMapper;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -19,13 +18,15 @@ public abstract class BaseIntegrationTest {
     protected MockMvc mockMvc;
 
     @Autowired
-    protected ObjectMapper objectMapper;
+    protected TestHelper helper;
 
     @Autowired
     private TransactionRepository transactionRepository;
 
     @Autowired
     private SellerRepository sellerRepository;
+
+    protected final String baseUrl = "/api/v1";
 
     @AfterEach
     void cleanup() {

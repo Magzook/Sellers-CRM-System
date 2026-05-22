@@ -1,18 +1,12 @@
 package ru.magzook.sellersrestservice;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class TransactionControllerTest extends BaseIntegrationTest {
-
-    @Autowired
-    private TestHelper helper;
-
-    private final String baseUrl = "/api/v1";
 
     @Test
     void createTransaction_success() throws Exception {
