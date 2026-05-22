@@ -27,7 +27,7 @@ services:
 
   app:
     build: .
-    container_name: sellers-rest-service
+    container_name: spring-boot-rest-service
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/sellers_db
       SPRING_DATASOURCE_USERNAME: admin
