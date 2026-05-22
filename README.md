@@ -61,6 +61,26 @@ SDK: ms-17 (JDK 17)
 | `junit-platform-launcher`         | Платформа запуска тестов.                                                             |
 | `h2`                              | Встраиваемая in-memory база данных. Используется в тестах вместо PostgreSQL.          |
 
+### Развёртывание
+
+1) Скачать проект
+
+2) Собрать JAR. Он появится по пути `build/libs`
+```text
+./gradlew bootJar 
+```
+
+3) Собрать и запустить контейнеры Docker.
+```text
+docker-compose -p sellers-system up --build -d
+```
+
+Сервер Spring Boot будет работать на порту `8080`.
+
+База данных PostgreSQL будет работать на порту `5432`.
+
+Swagger UI будет работать по адресу http://localhost:8080/swagger-ui/index.html#.
+
 # Описание API
 
 Базовый URL для всех запросов: `/api/v1`
