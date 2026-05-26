@@ -2,8 +2,6 @@ package ru.magzook.sellersrestservice.entity;
 
 import jakarta.persistence.*;
 import ru.magzook.sellersrestservice.dto.enums.PaymentType;
-import ru.magzook.sellersrestservice.dto.response.TransactionDto;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -85,15 +83,5 @@ public class Transaction {
 
     public void setSeller(Seller seller) {
         this.seller = seller;
-    }
-
-    public TransactionDto toDto() {
-        return new TransactionDto(
-                id,
-                amount,
-                paymentType,
-                transactionDate,
-                seller.getId()
-        );
     }
 }

@@ -1,8 +1,6 @@
 package ru.magzook.sellersrestservice.entity;
 
 import jakarta.persistence.*;
-import ru.magzook.sellersrestservice.dto.response.SellerDto;
-
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -81,14 +79,5 @@ public class Seller {
 
     public void setTransactions(Set<Transaction> transactions) {
         this.transactions = transactions;
-    }
-
-    public SellerDto toDto() {
-        return new SellerDto(
-                id,
-                name,
-                contactInfo,
-                registrationDate
-        );
     }
 }
