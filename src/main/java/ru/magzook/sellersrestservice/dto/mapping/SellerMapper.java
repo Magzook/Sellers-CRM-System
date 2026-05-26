@@ -1,8 +1,7 @@
 package ru.magzook.sellersrestservice.dto.mapping;
 
 import org.springframework.stereotype.Component;
-import ru.magzook.sellersrestservice.dto.request.CreateSellerRequestDto;
-import ru.magzook.sellersrestservice.dto.request.UpdateSellerRequestDto;
+import ru.magzook.sellersrestservice.dto.request.CreateUpdateSellerRequestDto;
 import ru.magzook.sellersrestservice.dto.response.SellerDto;
 import ru.magzook.sellersrestservice.entity.Seller;
 import java.time.LocalDateTime;
@@ -18,19 +17,19 @@ public class SellerMapper {
         );
     }
 
-    public Seller toSellerEntity(CreateSellerRequestDto dto) {
+    public Seller toSellerEntity(CreateUpdateSellerRequestDto dto) {
         return new Seller(
-                dto.getName(),
-                dto.getContactInfo(),
+                dto.name(),
+                dto.contactInfo(),
                 LocalDateTime.now()
         );
     }
 
-    public Seller toSellerEntity(UpdateSellerRequestDto dto, int id, LocalDateTime registrationDate) {
+    public Seller toSellerEntity(CreateUpdateSellerRequestDto dto, int id, LocalDateTime registrationDate) {
         return new Seller(
                 id,
-                dto.getName(),
-                dto.getContactInfo(),
+                dto.name(),
+                dto.contactInfo(),
                 registrationDate
         );
     }

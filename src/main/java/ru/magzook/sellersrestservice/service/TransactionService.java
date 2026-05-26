@@ -54,10 +54,10 @@ public class TransactionService {
 
     public TransactionDto create(CreateTransactionRequestDto request) {
         Seller seller = sellerRepository
-                .findById(request.getSellerId())
-                .orElseThrow(() -> new EntityWithIdNotFoundException("Seller", request.getSellerId()));
+                .findById(request.sellerId())
+                .orElseThrow(() -> new EntityWithIdNotFoundException("Seller", request.sellerId()));
 
-        Transaction transaction = transactionMapper.toTransaction(request, seller);
+        Transaction transaction = transactionMapper.toTransactionEntity(request, seller);
         transaction = transactionRepository.save(transaction);
         return transactionMapper.toTransactionDto(transaction);
     }

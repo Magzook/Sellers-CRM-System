@@ -3,8 +3,7 @@ package ru.magzook.sellersrestservice.controller;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.magzook.sellersrestservice.dto.request.CreateSellerRequestDto;
-import ru.magzook.sellersrestservice.dto.request.UpdateSellerRequestDto;
+import ru.magzook.sellersrestservice.dto.request.CreateUpdateSellerRequestDto;
 import ru.magzook.sellersrestservice.dto.response.SellerDto;
 import ru.magzook.sellersrestservice.dto.response.SellerListDto;
 import ru.magzook.sellersrestservice.service.SellerService;
@@ -30,14 +29,14 @@ public class SellerController {
     }
 
     @PostMapping("/sellers")
-    public SellerDto create(@RequestBody @Valid CreateSellerRequestDto request) {
+    public SellerDto create(@RequestBody @Valid CreateUpdateSellerRequestDto request) {
         return sellerService.create(request);
     }
 
     @PutMapping("/sellers/{id}")
     public SellerDto update(
             @PathVariable int id,
-            @RequestBody @Valid UpdateSellerRequestDto request) {
+            @RequestBody @Valid CreateUpdateSellerRequestDto request) {
         return sellerService.update(id, request);
     }
 

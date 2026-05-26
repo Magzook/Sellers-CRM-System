@@ -4,8 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.magzook.sellersrestservice.dto.mapping.SellerMapper;
 import ru.magzook.sellersrestservice.entity.Seller;
-import ru.magzook.sellersrestservice.dto.request.CreateSellerRequestDto;
-import ru.magzook.sellersrestservice.dto.request.UpdateSellerRequestDto;
+import ru.magzook.sellersrestservice.dto.request.CreateUpdateSellerRequestDto;
 import ru.magzook.sellersrestservice.dto.response.SellerDto;
 import ru.magzook.sellersrestservice.dto.response.SellerListDto;
 import ru.magzook.sellersrestservice.exception.EntityWithIdNotFoundException;
@@ -36,16 +35,16 @@ public class SellerService {
                 .orElseThrow(() -> new EntityWithIdNotFoundException("Seller", id));
     }
 
-    public SellerDto create(CreateSellerRequestDto request) {
-        Seller seller = sellerMapper.toSellerEntity(request);
+    public SellerDto create(CreateUpdateSellerRequestDto dto) {
+        Seller seller = sellerMapper.toSellerEntity(dto);
         seller = sellerRepository.save(seller);
         return sellerMapper.toSellerDto(seller);
     }
 
-    public SellerDto update(int id, UpdateSellerRequestDto request) {
+    public SellerDto update(int id, CreateUpdateSellerRequestDto dto) {
         return sellerRepository.findById(id)
                 .map(oldSeller -> {
-                    Seller updatedSeller = sellerMapper.toSellerEntity(request, oldSeller.getId(), oldSeller.getRegistrationDate());
+                    Seller updatedSeller = sellerMapper.toSellerEntity(dto, oldSeller.getId(), oldSeller.getRegistrationDate());
                     updatedSeller = sellerRepository.save(updatedSeller);
                     return sellerMapper.toSellerDto(updatedSeller);
                 })

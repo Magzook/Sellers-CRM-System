@@ -27,6 +27,7 @@ public class TransactionMapper {
                 transaction.getSeller().getId()
         );
     }
+
     public TransactionWithSellerDto toTransactionWithSellerDto(Transaction transaction) {
         return new TransactionWithSellerDto(
                 transaction.getId(),
@@ -37,10 +38,10 @@ public class TransactionMapper {
         );
     }
 
-    public Transaction toTransaction(CreateTransactionRequestDto dto, Seller seller) {
+    public Transaction toTransactionEntity(CreateTransactionRequestDto dto, Seller seller) {
         return new Transaction(
-                dto.getAmount(),
-                dto.getPaymentType(),
+                dto.amount(),
+                dto.paymentType(),
                 LocalDateTime.now(),
                 seller
         );
