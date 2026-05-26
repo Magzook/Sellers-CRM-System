@@ -29,15 +29,15 @@ public class SellerController {
     }
 
     @PostMapping("/sellers")
-    public SellerDto create(@RequestBody @Valid CreateUpdateSellerRequestDto request) {
-        return sellerService.create(request);
+    public SellerDto create(@RequestBody @Valid CreateUpdateSellerRequestDto requestDto) {
+        return sellerService.create(requestDto);
     }
 
     @PutMapping("/sellers/{id}")
     public SellerDto update(
             @PathVariable int id,
-            @RequestBody @Valid CreateUpdateSellerRequestDto request) {
-        return sellerService.update(id, request);
+            @RequestBody @Valid CreateUpdateSellerRequestDto requestDto) {
+        return sellerService.update(id, requestDto);
     }
 
     @DeleteMapping("/sellers/{id}")

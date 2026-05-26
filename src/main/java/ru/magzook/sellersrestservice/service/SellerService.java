@@ -23,10 +23,10 @@ public class SellerService {
     }
 
     public SellerListDto findAll() {
-        List<SellerDto> sellers = sellerRepository.findAll().stream()
+        List<SellerDto> sellersDtos = sellerRepository.findAll().stream()
                 .map(sellerMapper::toSellerDto)
                 .toList();
-        return new SellerListDto(sellers);
+        return new SellerListDto(sellersDtos);
     }
 
     public SellerDto findById(int id) {
@@ -35,17 +35,17 @@ public class SellerService {
                 .orElseThrow(() -> new SellerWithIdNotFoundException(id));
     }
 
-    public SellerDto create(CreateUpdateSellerRequestDto dto) {
-        Seller seller = sellerMapper.toSellerEntity(dto);
+    public SellerDto create(CreateUpdateSellerRequestDto requestDto) {
+        Seller seller = sellerMapper.toSellerEntity(requestDto);
         seller = sellerRepository.save(seller);
         return sellerMapper.toSellerDto(seller);
     }
 
-    public SellerDto update(int id, CreateUpdateSellerRequestDto dto) {
+    public SellerDto update(int id, CreateUpdateSellerRequestDto requestDto) {
         return sellerRepository.findById(id)
                 .map(oldSeller -> {
                     Seller updatedSeller = sellerMapper
-                            .toSellerEntity(dto, oldSeller.getId(), oldSeller.getRegistrationDate());
+                            .toSellerEntity(requestDto, oldSeller.getId(), oldSeller.getRegistrationDate());
                     updatedSeller = sellerRepository.save(updatedSeller);
                     return sellerMapper.toSellerDto(updatedSeller);
                 })

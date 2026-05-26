@@ -31,7 +31,8 @@ public class AnalyticsService {
             LocalDateTime to,
             BigDecimal threshold)
     {
-        List<SellerWithTotalDto> sellers = analyticsRepository.findSellersWithTotalBelow(from, to, threshold);
-        return new SellerWithTotalListDto(sellers);
+        List<SellerWithTotalDto> sellersWithTotalDtos = analyticsRepository
+                .findSellersWithTotalBelow(from, to, threshold);
+        return new SellerWithTotalListDto(sellersWithTotalDtos);
     }
 }

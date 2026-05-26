@@ -35,7 +35,7 @@ public class TransactionController {
     }
 
     @PostMapping("/transactions")
-    public TransactionDto create(@RequestBody @Valid CreateTransactionRequestDto request) {
-        return transactionService.create(request);
+    public TransactionDto create(@RequestBody @Valid CreateTransactionRequestDto requestDto) {
+        return transactionService.create(requestDto);
     }
 }

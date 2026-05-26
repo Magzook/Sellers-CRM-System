@@ -34,10 +34,10 @@ public class TransactionService {
     }
 
     public TransactionListDto findAll() {
-        List<TransactionDto> transactions = transactionRepository.findAll().stream()
+        List<TransactionDto> transactionsDtos = transactionRepository.findAll().stream()
                 .map(transactionMapper::toTransactionDto)
                 .toList();
-        return new TransactionListDto(transactions);
+        return new TransactionListDto(transactionsDtos);
     }
 
     public TransactionWithSellerDto findByIdFetchSeller(long id) {
@@ -56,11 +56,11 @@ public class TransactionService {
         return new TransactionListDto(transactions);
     }
 
-    public TransactionDto create(CreateTransactionRequestDto request) {
+    public TransactionDto create(CreateTransactionRequestDto requestDto) {
         Seller seller = sellerRepository
-                .findById(request.sellerId())
-                .orElseThrow(() -> new SellerWithIdNotFoundException(request.sellerId()));
-        Transaction transaction = transactionMapper.toTransactionEntity(request, seller);
+                .findById(requestDto.sellerId())
+                .orElseThrow(() -> new SellerWithIdNotFoundException(requestDto.sellerId()));
+        Transaction transaction = transactionMapper.toTransactionEntity(requestDto, seller);
         transaction = transactionRepository.save(transaction);
         return transactionMapper.toTransactionDto(transaction);
     }

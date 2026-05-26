@@ -21,8 +21,8 @@ public class GlobalExceptionHandler {
 
     // Validation failures
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ExceptionDto> handleValidationFail(MethodArgumentNotValidException exception) {
-        List<String> details = exception.getBindingResult().getFieldErrors().stream()
+    public ResponseEntity<ExceptionDto> handleValidationFail(MethodArgumentNotValidException ex) {
+        List<String> details = ex.getBindingResult().getFieldErrors().stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .toList();
         return buildResponse(
