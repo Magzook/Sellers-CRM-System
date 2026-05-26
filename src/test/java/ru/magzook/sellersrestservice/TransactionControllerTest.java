@@ -1,9 +1,7 @@
 package ru.magzook.sellersrestservice;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class TransactionControllerTest extends BaseIntegrationTest {
@@ -13,12 +11,7 @@ class TransactionControllerTest extends BaseIntegrationTest {
     @Test
     void createTransaction_success() throws Exception {
         int sellerId = helper.createSeller("Bob", "bob@mail.com");
-
-        mockMvc.perform(post(transactionsUrl)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {"amount": 100.50, "paymentType": "CASH", "sellerId": %d}
-                                """.formatted(sellerId)))
+        performPost(transactionsUrl, makeTransactionBody("100.50", "CASH", Integer.toString(sellerId)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").isNotEmpty())
                 .andExpect(jsonPath("$.amount").value(100.50))
@@ -29,51 +22,44 @@ class TransactionControllerTest extends BaseIntegrationTest {
 
     @Test
     void createTransaction_negativeAmount_returns400() throws Exception {
-        int sellerId = helper.createSeller("Bob", "bob@mail.com");
+        createTransaction_InvalidAmount("-18", "amount cannot be negative");
+    }
 
-        mockMvc.perform(post(transactionsUrl)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {"amount": -1, "paymentType": "CASH", "sellerId": %d}
-                                """.formatted(sellerId)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("Validation failed"))
-                .andExpect(jsonPath("$.timestamp").isNotEmpty())
-                .andExpect(jsonPath("$.details[0]").value("amount cannot be negative"));
+    @Test
+    void createTransaction_InvalidNumericAmount_returns400() throws Exception {
+        createTransaction_InvalidAmount("777777777777777777777", "amount must fit numeric(14,2)");
+    }
+
+    @Test
+    void createTransaction_InvalidNumericAmount2_returns400() throws Exception {
+        createTransaction_InvalidAmount("777.192", "amount must fit numeric(14,2)");
     }
 
     @Test
     void createTransaction_invalidPaymentType_returns400() throws Exception {
         int sellerId = helper.createSeller("Bob", "bob@mail.com");
 
-        mockMvc.perform(post(transactionsUrl)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {"amount": 100, "paymentType": "BITCOIN", "sellerId": %d}
-                                """.formatted(sellerId)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("Unreadable enum value"))
-                .andExpect(jsonPath("$.timestamp").isNotEmpty())
-                .andExpect(jsonPath("$.details[0]").value("Accepted values are: [CASH, CARD, TRANSFER]"));
+        var response = performPost(
+                transactionsUrl,
+                makeTransactionBody("100", "BITCOIN", Integer.toString(sellerId)));
+        expectBadEnumInJson(response, "Accepted values are: [CASH, CARD, TRANSFER]");
     }
 
     @Test
     void createTransaction_sellerNotFound_returns404() throws Exception {
-        mockMvc.perform(post(transactionsUrl)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {"amount": 100, "paymentType": "CASH", "sellerId": 999}
-                                """))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message").value("seller with id 999 not found"));
+        int sellerId = 999;
+        var response = performPost(
+                transactionsUrl,
+                makeTransactionBody("100", "CASH", Integer.toString(sellerId)));
+        expectEntityWithIdNotFound(response, "seller", sellerId);
     }
 
     @Test
     void getTransaction_withSellerInfo() throws Exception {
         int sellerId = helper.createSeller("Bob", "bob@mail.com");
-        int txId = helper.createTransaction(100, "CARD", sellerId);
+        int transactionId = helper.createTransaction(100, "CARD", sellerId);
 
-        mockMvc.perform(get(transactionsUrl + "/{id}", txId))
+        performGet(transactionsUrl + "/" + transactionId)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").isNotEmpty())
                 .andExpect(jsonPath("$.amount").value(100))
@@ -92,7 +78,7 @@ class TransactionControllerTest extends BaseIntegrationTest {
         helper.createTransaction(200, "CARD", sellerId);
         helper.createTransaction(300, "TRANSFER", sellerId);
 
-        mockMvc.perform(get(baseUrl + "/sellers/{id}/transactions", sellerId))
+        performGet(baseUrl + "/sellers/" + sellerId + "/transactions")
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.transactions.length()").value(3));
     }
@@ -104,16 +90,35 @@ class TransactionControllerTest extends BaseIntegrationTest {
         helper.createTransaction(200, "CARD", sellerId);
         helper.createTransaction(300, "TRANSFER", sellerId);
 
-        mockMvc.perform(delete(baseUrl + "/sellers/{id}", sellerId))
+        performDelete(baseUrl + "/sellers/" + sellerId)
                 .andExpect(status().isOk());
 
-        mockMvc.perform(get(baseUrl + "/sellers/{id}/transactions", sellerId))
-                .andExpect(status().isNotFound());
+        var response = performGet(baseUrl + "/sellers/" + sellerId + "/transactions");
+        expectEntityWithIdNotFound(response, "seller", sellerId);
     }
 
     @Test
     void getTransaction_notFound_returns404() throws Exception {
-        mockMvc.perform(get(transactionsUrl + "/{id}", 999))
-                .andExpect(status().isNotFound());
+        int id = 999;
+        var response = performGet(transactionsUrl + "/" + id);
+        expectEntityWithIdNotFound(response, "transaction", id);
+    }
+
+    private void createTransaction_InvalidAmount(String amountAsString, String detail) throws Exception {
+        int sellerId = helper.createSeller("Bob", "bob@mail.com");
+
+        var response = performPost(
+                transactionsUrl,
+                makeTransactionBody(amountAsString, "CASH", Integer.toString(sellerId)));
+        expectValidationFailed(response, detail);
+    }
+
+    private static String makeTransactionBody(
+            String amountAsString,
+            String paymentTypeAsString,
+            String sellerIdAsString) {
+        return """
+               {"amount": %s, "paymentType": "%s", "sellerId": %s}
+               """.formatted(amountAsString, paymentTypeAsString, sellerIdAsString);
     }
 }

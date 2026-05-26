@@ -36,23 +36,23 @@ public class TestHelper {
     }
 
     public int createSeller(String name, String contactInfo) throws Exception {
-        String response = mockMvc.perform(post("/api/v1/sellers")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
+        return postAndReturnIntId("/api/v1/sellers",
+                                """
                                 {"name": "%s", "contactInfo": "%s"}
-                                """.formatted(name, contactInfo)))
-                .andExpect(status().isOk())
-                .andReturn().getResponse().getContentAsString();
-
-        return objectMapper.readTree(response).get("id").asInt();
+                                """.formatted(name, contactInfo));
     }
 
     public int createTransaction(int amount, String paymentType, int sellerId) throws Exception {
-        String response = mockMvc.perform(post("/api/v1/transactions")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
+        return postAndReturnIntId("/api/v1/transactions",
+                                """
                                 {"amount": %s, "paymentType": "%s", "sellerId": %d}
-                                """.formatted(amount, paymentType, sellerId)))
+                                """.formatted(amount, paymentType, sellerId));
+    }
+
+    private int postAndReturnIntId(String url, String content) throws Exception {
+        String response = mockMvc.perform(post(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 

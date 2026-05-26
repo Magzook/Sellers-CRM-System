@@ -5,6 +5,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.test.web.servlet.ResultActions;
 import ru.magzook.sellersrestservice.dto.enums.TimePeriod;
 import ru.magzook.sellersrestservice.service.AnalyticsService;
 
@@ -32,8 +33,7 @@ class AnalyticsControllerTest extends BaseIntegrationTest {
         helper.createTransaction(20, "CARD", bob);
         helper.createTransaction(300, "CARD", bob);
 
-        mockMvc.perform(get(top1SellersUrl)
-                        .param("period", "DAY"))
+        mockMvc.perform(get(top1SellersUrl).param("period", "DAY"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.sellers.length()").value(1))
                 .andExpect(jsonPath("$.sellers[0].name").value("Alice"))
@@ -49,8 +49,7 @@ class AnalyticsControllerTest extends BaseIntegrationTest {
         helper.createTransaction(5000, "CARD", bob);
         helper.createTransaction(12000, "CARD", bob);
 
-        mockMvc.perform(get(top1SellersUrl)
-                        .param("period", "DAY"))
+        mockMvc.perform(get(top1SellersUrl).param("period", "DAY"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.sellers.length()").value(2))
                 .andExpect(jsonPath("$.sellers[*].name", containsInAnyOrder("Alice", "Bob")))
@@ -61,8 +60,7 @@ class AnalyticsControllerTest extends BaseIntegrationTest {
     void getTopSellers_noTransactions_returnsEmptyList() throws Exception {
         helper.createSeller("Alice", "alice@mail.com");
 
-        mockMvc.perform(get(top1SellersUrl)
-                        .param("period", "DAY"))
+        mockMvc.perform(get(top1SellersUrl).param("period", "DAY"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.sellers.length()").value(0));
     }
@@ -73,21 +71,17 @@ class AnalyticsControllerTest extends BaseIntegrationTest {
         int alice = helper.createSeller("Alice", "alice@mail.com");
         helper.createTransaction(10000, "CASH", alice);
 
-        mockMvc.perform(get(top1SellersUrl)
-                        .param("period", period.name()))
+        mockMvc.perform(get(top1SellersUrl).param("period", period.name()))
                 .andExpect(status().isOk());
     }
 
     @Test
     void getTopSellers_invalidPeriod_returns400() throws Exception {
-        mockMvc.perform(get(top1SellersUrl)
-                        .param("period", "WEEK"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message")
-                        .value("Method argument type mismatch"))
-                .andExpect(jsonPath("$.timestamp").isNotEmpty())
-                .andExpect(jsonPath("$.details[0]")
-                        .value("period should be a valid TimePeriod and WEEK isn't"));
+        String argumentName = "period";
+        String argumentType = TimePeriod.class.getSimpleName();
+        String actualValue = "WEEK";
+        ResultActions response = mockMvc.perform(get(top1SellersUrl).param(argumentName, actualValue));
+        expectMethodArgumentTypeMismatch(response, argumentName, argumentType, actualValue);
     }
 
     @ParameterizedTest
@@ -104,8 +98,7 @@ class AnalyticsControllerTest extends BaseIntegrationTest {
         helper.createTransactionWithDate(5000, "CARD", bob, insidePeriod);
         helper.createTransactionWithDate(99999, "CASH", bob, outsidePeriod);
 
-        mockMvc.perform(get(top1SellersUrl)
-                        .param("period", period.name()))
+        mockMvc.perform(get(top1SellersUrl).param("period", period.name()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.sellers.length()").value(1))
                 .andExpect(jsonPath("$.sellers[0].name").value("Alice"));
@@ -170,16 +163,14 @@ class AnalyticsControllerTest extends BaseIntegrationTest {
 
     @Test
     void getSellersBelowThreshold_invalidDateFormat_returns400() throws Exception {
-        mockMvc.perform(get(sellersBelowThresholdUrl)
-                        .param("from", "01-01-2026")
+        String argumentName = "from";
+        String argumentType = LocalDateTime.class.getSimpleName();
+        String actualValue = "01-01-2026";
+        ResultActions response = mockMvc.perform(get(sellersBelowThresholdUrl)
+                        .param(argumentName, actualValue)
                         .param("to", "2026-12-31 23:59:59")
-                        .param("threshold", "5000"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message")
-                        .value("Method argument type mismatch"))
-                .andExpect(jsonPath("$.timestamp").isNotEmpty())
-                .andExpect(jsonPath("$.details[0]")
-                        .value("from should be a valid LocalDateTime and 01-01-2026 isn't"));
+                        .param("threshold", "5000"));
+        expectMethodArgumentTypeMismatch(response, argumentName, argumentType, actualValue);
     }
 
     @Test

@@ -88,9 +88,9 @@ Swagger UI будет работать по адресу http://localhost:8080/s
 Тип контента запросов и ответов: `application/json`
 
 ## Шаблонные ответы
+
 ### Ошибка валидации
 **`400 BAD REQUEST`**
-
 Пример:
 ```json
 {
@@ -101,9 +101,9 @@ Swagger UI будет работать по адресу http://localhost:8080/s
   ]
 }
 ```
-### Ошибка чтения enum как параметра или поля
-**`400 BAD REQUEST`**
 
+### Ошибка чтения enum в JSON
+**`400 BAD REQUEST`**
 Пример:
 ```json
 {
@@ -114,9 +114,9 @@ Swagger UI будет работать по адресу http://localhost:8080/s
   ]
 }
 ```
+
 ### Нечитаемый JSON
 **`400 BAD REQUEST`**
-
 Пример:
 ```json
 {
@@ -127,9 +127,22 @@ Swagger UI будет работать по адресу http://localhost:8080/s
   ]
 }
 ```
+
+### Ошибка типа данных аргумента в URL
+**`400 BAD REQUEST`**
+Пример:
+```json
+{
+  "message": "Method argument type mismatch",
+  "timestamp": "2026-05-26T23:37:00.5873559",
+  "details": [
+    "id should be a valid int and 123451234512345 isn't"
+  ]
+}
+```
+
 ### Сущность по id не найдена
 **`404 NOT FOUND`**
-
 Пример:
 ```json
 {
