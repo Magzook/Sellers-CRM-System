@@ -6,7 +6,9 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import ru.magzook.sellersrestservice.dto.enums.TimePeriod;
+import ru.magzook.sellersrestservice.service.AnalyticsService;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.stream.Stream;
 
@@ -107,7 +109,8 @@ class AnalyticsControllerTest extends BaseIntegrationTest {
     private static Stream<Arguments> periodArguments() {
         return Stream.of(TimePeriod.values())
                 .map(period -> {
-                    LocalDateTime[] range = period.whenBeganAndEnds();
+                    LocalDateTime[] range = AnalyticsService
+                            .resolveWhenPeriodOfDateBeginsAndEnds(period, LocalDate.now());
                     LocalDateTime insidePeriod = range[0].plusHours(1);
                     LocalDateTime outsidePeriod = range[0].minusDays(1);
                     return Arguments.of(period, insidePeriod, outsidePeriod);
