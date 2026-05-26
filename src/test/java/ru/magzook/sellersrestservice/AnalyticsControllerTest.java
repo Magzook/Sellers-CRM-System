@@ -82,7 +82,12 @@ class AnalyticsControllerTest extends BaseIntegrationTest {
     void getTopSellers_invalidPeriod_returns400() throws Exception {
         mockMvc.perform(get(top1SellersUrl)
                         .param("period", "WEEK"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message")
+                        .value("Method argument type mismatch"))
+                .andExpect(jsonPath("$.timestamp").isNotEmpty())
+                .andExpect(jsonPath("$.details[0]")
+                        .value("period should be a valid TimePeriod and WEEK isn't"));
     }
 
     @ParameterizedTest
@@ -169,7 +174,12 @@ class AnalyticsControllerTest extends BaseIntegrationTest {
                         .param("from", "01-01-2026")
                         .param("to", "2026-12-31 23:59:59")
                         .param("threshold", "5000"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message")
+                        .value("Method argument type mismatch"))
+                .andExpect(jsonPath("$.timestamp").isNotEmpty())
+                .andExpect(jsonPath("$.details[0]")
+                        .value("from should be a valid LocalDateTime and 01-01-2026 isn't"));
     }
 
     @Test

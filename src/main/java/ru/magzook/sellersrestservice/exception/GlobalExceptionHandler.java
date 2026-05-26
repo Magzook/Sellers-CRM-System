@@ -8,6 +8,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import ru.magzook.sellersrestservice.dto.response.exception.ExceptionDto;
 import tools.jackson.databind.exc.InvalidFormatException;
 
@@ -58,6 +59,22 @@ public class GlobalExceptionHandler {
                 List.of(ex.getMessage()));
     }
 
+    // Method argument type mismatch
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ExceptionDto> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+        String argumentName = ex.getName();
+        Class<?> requiredType = ex.getRequiredType();
+        String requiredTypeAsString = requiredType == null ? "<couldn't detect type>" : requiredType.getSimpleName();
+        Object actualValue = ex.getValue();
+        String message = String.format("%s should be a valid %s and %s isn't",
+                argumentName, requiredTypeAsString, actualValue);
+
+        return buildResponse(
+                HttpStatus.BAD_REQUEST,
+                "Method argument type mismatch",
+                List.of(message));
+    }
+
     // DB data integrity violation (not supposed to happen, otherwise should add more robust validation)
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ExceptionDto> handleDataIntegrity(DataIntegrityViolationException ex) {
@@ -65,6 +82,16 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST,
                 "Database data integrity violation",
                 List.of(ex.getMessage()));
+    }
+
+    // Any other exception
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ExceptionDto> handleUnknownException(Exception ex) {
+        return buildResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                ex.getMessage(),
+                Collections.emptyList()
+        );
     }
 
     private ResponseEntity<ExceptionDto> buildResponse(HttpStatus status, String message, List<String> details) {

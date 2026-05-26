@@ -108,6 +108,17 @@ class SellerControllerTest extends BaseIntegrationTest {
     }
 
     @Test
+    void findSellerById_badType_returns400() throws Exception {
+        mockMvc.perform(get(sellersUrl + "/123451234512345123451234512345"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message")
+                        .value("Method argument type mismatch"))
+                .andExpect(jsonPath("$.timestamp").isNotEmpty())
+                .andExpect(jsonPath("$.details[0]")
+                        .value("id should be a valid int and 123451234512345123451234512345 isn't"));
+    }
+
+    @Test
     void updateSeller_success() throws Exception {
         String oldName = "Hank";
         String oldContactInfo = "schrader@mail.com";
