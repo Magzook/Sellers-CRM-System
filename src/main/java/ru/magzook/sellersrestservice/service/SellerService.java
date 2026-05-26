@@ -7,7 +7,7 @@ import ru.magzook.sellersrestservice.entity.Seller;
 import ru.magzook.sellersrestservice.dto.request.CreateUpdateSellerRequestDto;
 import ru.magzook.sellersrestservice.dto.response.SellerDto;
 import ru.magzook.sellersrestservice.dto.response.SellerListDto;
-import ru.magzook.sellersrestservice.exception.EntityWithIdNotFoundException;
+import ru.magzook.sellersrestservice.exception.SellerWithIdNotFoundException;
 import ru.magzook.sellersrestservice.repository.SellerRepository;
 import java.util.List;
 
@@ -32,7 +32,7 @@ public class SellerService {
     public SellerDto findById(int id) {
         return sellerRepository.findById(id)
                 .map(sellerMapper::toSellerDto)
-                .orElseThrow(() -> new EntityWithIdNotFoundException("Seller", id));
+                .orElseThrow(() -> new SellerWithIdNotFoundException(id));
     }
 
     public SellerDto create(CreateUpdateSellerRequestDto dto) {
@@ -44,11 +44,12 @@ public class SellerService {
     public SellerDto update(int id, CreateUpdateSellerRequestDto dto) {
         return sellerRepository.findById(id)
                 .map(oldSeller -> {
-                    Seller updatedSeller = sellerMapper.toSellerEntity(dto, oldSeller.getId(), oldSeller.getRegistrationDate());
+                    Seller updatedSeller = sellerMapper
+                            .toSellerEntity(dto, oldSeller.getId(), oldSeller.getRegistrationDate());
                     updatedSeller = sellerRepository.save(updatedSeller);
                     return sellerMapper.toSellerDto(updatedSeller);
                 })
-                .orElseThrow(() -> new EntityWithIdNotFoundException("Seller", id));
+                .orElseThrow(() -> new SellerWithIdNotFoundException(id));
     }
 
     public void delete(int id) {

@@ -10,7 +10,8 @@ import ru.magzook.sellersrestservice.dto.response.TransactionListDto;
 import ru.magzook.sellersrestservice.dto.response.TransactionWithSellerDto;
 import ru.magzook.sellersrestservice.entity.Seller;
 import ru.magzook.sellersrestservice.entity.Transaction;
-import ru.magzook.sellersrestservice.exception.EntityWithIdNotFoundException;
+import ru.magzook.sellersrestservice.exception.SellerWithIdNotFoundException;
+import ru.magzook.sellersrestservice.exception.TransactionWithIdNotFoundException;
 import ru.magzook.sellersrestservice.repository.SellerRepository;
 import ru.magzook.sellersrestservice.repository.TransactionRepository;
 import java.util.List;
@@ -23,7 +24,10 @@ public class TransactionService {
     private final TransactionMapper transactionMapper;
 
     @Autowired
-    public TransactionService(TransactionRepository transactionRepository, SellerRepository sellerRepository, TransactionMapper transactionMapper) {
+    public TransactionService(
+            TransactionRepository transactionRepository,
+            SellerRepository sellerRepository,
+            TransactionMapper transactionMapper) {
         this.transactionRepository = transactionRepository;
         this.sellerRepository = sellerRepository;
         this.transactionMapper = transactionMapper;
@@ -39,13 +43,13 @@ public class TransactionService {
     public TransactionWithSellerDto findByIdFetchSeller(int id) {
         return transactionRepository.findByIdFetchSeller(id)
                 .map(transactionMapper::toTransactionWithSellerDto)
-                .orElseThrow(() -> new EntityWithIdNotFoundException("Transaction", id));
+                .orElseThrow(() -> new TransactionWithIdNotFoundException(id));
     }
 
     public TransactionListDto findBySellerId(int sellerId) {
         Seller seller = sellerRepository
                 .findByIdFetchTransactions(sellerId)
-                .orElseThrow(() -> new EntityWithIdNotFoundException("Seller", sellerId));
+                .orElseThrow(() -> new SellerWithIdNotFoundException(sellerId));
         List<TransactionDto> transactions = seller.getTransactions().stream()
                 .map(transactionMapper::toTransactionDto)
                 .toList();
@@ -55,8 +59,7 @@ public class TransactionService {
     public TransactionDto create(CreateTransactionRequestDto request) {
         Seller seller = sellerRepository
                 .findById(request.sellerId())
-                .orElseThrow(() -> new EntityWithIdNotFoundException("Seller", request.sellerId()));
-
+                .orElseThrow(() -> new SellerWithIdNotFoundException(request.sellerId()));
         Transaction transaction = transactionMapper.toTransactionEntity(request, seller);
         transaction = transactionRepository.save(transaction);
         return transactionMapper.toTransactionDto(transaction);
