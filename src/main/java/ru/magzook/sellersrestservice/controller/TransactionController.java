@@ -25,7 +25,7 @@ public class TransactionController {
     }
 
     @GetMapping("/transactions/{id}")
-    public TransactionWithSellerDto findById(@PathVariable int id) {
+    public TransactionWithSellerDto findById(@PathVariable long id) {
         return transactionService.findByIdFetchSeller(id);
     }
 

@@ -12,5 +12,5 @@ import java.util.Optional;
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 
     @Query("SELECT t FROM Transaction t JOIN FETCH t.seller WHERE t.id = :id")
-    Optional<Transaction> findByIdFetchSeller(@Param("id") int id);
+    Optional<Transaction> findByIdFetchSeller(@Param("id") long id);
 }

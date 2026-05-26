@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record TransactionWithSellerDto(
-        int id,
+        long id,
         BigDecimal amount,
         PaymentType paymentType,
         LocalDateTime transactionDate,

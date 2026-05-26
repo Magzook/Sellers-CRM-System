@@ -40,7 +40,7 @@ public class TransactionService {
         return new TransactionListDto(transactions);
     }
 
-    public TransactionWithSellerDto findByIdFetchSeller(int id) {
+    public TransactionWithSellerDto findByIdFetchSeller(long id) {
         return transactionRepository.findByIdFetchSeller(id)
                 .map(transactionMapper::toTransactionWithSellerDto)
                 .orElseThrow(() -> new TransactionWithIdNotFoundException(id));

@@ -6,7 +6,7 @@ CREATE TABLE sellers (
 );
 
 CREATE TABLE transactions (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     seller_id INT NOT NULL REFERENCES sellers(id) ON DELETE CASCADE,
     amount NUMERIC(14, 2) NOT NULL CHECK (amount >= 0),
     payment_type VARCHAR(8) NOT NULL CHECK (payment_type IN ('CASH', 'CARD', 'TRANSFER')),

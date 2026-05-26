@@ -12,7 +12,7 @@ public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private long id;
 
     @Column(name = "amount", nullable = false)
     private BigDecimal amount;
@@ -37,7 +37,7 @@ public class Transaction {
         this.seller = seller;
     }
 
-    public Transaction(int id, BigDecimal amount, PaymentType paymentType, LocalDateTime transactionDate, Seller seller) {
+    public Transaction(long id, BigDecimal amount, PaymentType paymentType, LocalDateTime transactionDate, Seller seller) {
         this.id = id;
         this.amount = amount;
         this.paymentType = paymentType;
@@ -45,11 +45,11 @@ public class Transaction {
         this.seller = seller;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
