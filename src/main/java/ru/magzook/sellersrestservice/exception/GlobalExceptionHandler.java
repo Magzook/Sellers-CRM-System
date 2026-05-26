@@ -8,6 +8,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.magzook.sellersrestservice.dto.response.exception.ExceptionDto;
 import tools.jackson.databind.exc.InvalidFormatException;
 
 import java.time.LocalDateTime;
@@ -20,7 +21,7 @@ public class GlobalExceptionHandler {
 
     // Validation failures
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ExceptionResponse> handleValidationFail(MethodArgumentNotValidException exception) {
+    public ResponseEntity<ExceptionDto> handleValidationFail(MethodArgumentNotValidException exception) {
         List<String> details = exception.getBindingResult().getFieldErrors().stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .toList();
@@ -32,7 +33,7 @@ public class GlobalExceptionHandler {
 
     // Entity with id not found
     @ExceptionHandler(EntityWithIdNotFoundException.class)
-    public ResponseEntity<ExceptionResponse> handleEntityNotFound(EntityWithIdNotFoundException ex) {
+    public ResponseEntity<ExceptionDto> handleEntityNotFound(EntityWithIdNotFoundException ex) {
         return buildResponse(
                 HttpStatus.NOT_FOUND,
                 ex.getMessage(),
@@ -41,7 +42,7 @@ public class GlobalExceptionHandler {
 
     // Unreadable JSON, including bad enum values
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ExceptionResponse> handleBadJson(HttpMessageNotReadableException ex) {
+    public ResponseEntity<ExceptionDto> handleBadJson(HttpMessageNotReadableException ex) {
         if (ex.getCause() instanceof InvalidFormatException ife) {
             Class<?> targetType = ife.getTargetType();
             if (targetType.isEnum()) {
@@ -59,15 +60,15 @@ public class GlobalExceptionHandler {
 
     // DB data integrity violation (not supposed to happen, otherwise should add more robust validation)
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ExceptionResponse> handleDataIntegrity(DataIntegrityViolationException ex) {
+    public ResponseEntity<ExceptionDto> handleDataIntegrity(DataIntegrityViolationException ex) {
         return buildResponse(
                 HttpStatus.BAD_REQUEST,
                 "Database data integrity violation",
                 List.of(ex.getMessage()));
     }
 
-    private ResponseEntity<ExceptionResponse> buildResponse(HttpStatus status, String message, List<String> details) {
-        ExceptionResponse body = new ExceptionResponse(
+    private ResponseEntity<ExceptionDto> buildResponse(HttpStatus status, String message, List<String> details) {
+        ExceptionDto body = new ExceptionDto(
                 message,
                 LocalDateTime.now(),
                 details
