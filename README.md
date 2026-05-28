@@ -84,10 +84,13 @@ REST-сервис для управления продавцами и транз
 ```text
 docker-compose -p sellers-system up --build -d
 ```
+Файлы конфигурации сборки и запуска: compose.yaml, Dockerfile.
 
 Сервер Spring Boot будет работать на порту `8080`.
 
 База данных PostgreSQL будет работать на порту `5432`.
+
+Количество системных ресурсов для сервера и БД явно не установлено.
 
 Swagger UI будет работать по адресу http://localhost:8080/swagger-ui/index.html#.
 
