@@ -7,6 +7,8 @@ REST-сервис для управления продавцами и транз
 Присутствуют автотесты.
 
 ### Функционал
+<details>
+
 - Список всех продавцов;
 - Инфо о конкретном продавце;
 - Создать нового продавца;
@@ -17,16 +19,21 @@ REST-сервис для управления продавцами и транз
 - Создать новую транзакцию;
 - Получить все транзакции продавца; 
 - Получить самого продуктивного продавца; 
-- Получить список продавцов с суммой меньше указанной;
+- Получить список продавцов с суммой меньше указанной.
+</details>
 
 ### Стек Java
-Версия Java: 17
+<details>
 
-SDK: ms-17 (JDK 17)
+- Версия Java: 17
 
-Сборщик: Gradle (диалект Groovy)
+- SDK: ms-17 (JDK 17)
+
+- Сборщик: Gradle (Groovy DSL)
+</details>
 
 ### Зависимости
+<details>
 
 #### База данных
 
@@ -60,8 +67,11 @@ SDK: ms-17 (JDK 17)
 | `spring-boot-starter-webmvc-test` | Инструменты для тестирования MVC-слоя (`MockMvc`), утилиты для проверки HTTP-ответов. |
 | `junit-platform-launcher`         | Платформа запуска тестов.                                                             |
 | `h2`                              | Встраиваемая in-memory база данных. Используется в тестах вместо PostgreSQL.          |
+</details>
 
 ### Развёртывание
+
+<details>
 
 1) Скачать проект
 
@@ -81,6 +91,8 @@ docker-compose -p sellers-system up --build -d
 
 Swagger UI будет работать по адресу http://localhost:8080/swagger-ui/index.html#.
 
+</details>
+
 # Описание API
 
 Базовый URL для всех запросов: `/api/v1`
@@ -88,8 +100,11 @@ Swagger UI будет работать по адресу http://localhost:8080/s
 Тип контента запросов и ответов: `application/json`
 
 ## Шаблонные ответы
+<details>
 
 ### Ошибка валидации
+<details>
+
 **`400 BAD REQUEST`**
 Пример:
 ```json
@@ -101,8 +116,11 @@ Swagger UI будет работать по адресу http://localhost:8080/s
   ]
 }
 ```
+</details>
 
 ### Ошибка чтения enum в JSON
+<details>
+
 **`400 BAD REQUEST`**
 Пример:
 ```json
@@ -114,8 +132,11 @@ Swagger UI будет работать по адресу http://localhost:8080/s
   ]
 }
 ```
+</details>
 
 ### Нечитаемый JSON
+<details>
+
 **`400 BAD REQUEST`**
 Пример:
 ```json
@@ -127,8 +148,11 @@ Swagger UI будет работать по адресу http://localhost:8080/s
   ]
 }
 ```
+</details>
 
 ### Ошибка типа данных аргумента в URL
+<details>
+
 **`400 BAD REQUEST`**
 Пример:
 ```json
@@ -140,8 +164,11 @@ Swagger UI будет работать по адресу http://localhost:8080/s
   ]
 }
 ```
+</details>
 
 ### Сущность по id не найдена
+<details>
+
 **`404 NOT FOUND`**
 Пример:
 ```json
@@ -151,10 +178,16 @@ Swagger UI будет работать по адресу http://localhost:8080/s
   "details": []
 }
 ```
+</details>
+
+</details>
 
 ## Продавцы
+<details>
 
 ### 1. Список всех продавцов
+<details>
+
 ```
 GET /sellers
 ```
@@ -178,8 +211,11 @@ GET /sellers
 | `name`             | Имя                        | string                |
 | `contactInfo`      | Контактные данные          | string                |
 | `registrationDate` | Дата регистрации в системе | string (дата и время) |
+</details>
 
 ### 2. Инфо о конкретном продавце
+<details>
+
 ```
 GET /sellers/{id}
 ```
@@ -206,8 +242,11 @@ GET /sellers/{id}
   "details": []
 }
 ```
+</details>
 
 ### 3. Создать нового продавца
+<details>
+
 ```
 POST /sellers
 ```
@@ -265,14 +304,20 @@ POST /sellers
   ]
 }
 ```
+</details>
 
 ### 4. Изменить продавца
+<details>
+
 ```
 PUT /sellers/{id}
 ```
 Тело запроса и ответы такие же, как в п.3 (плюс случай, когда id не существует)
+</details>
 
 ### 5. Удалить продавца
+<details>
+
 ```
 DELETE /sellers/{id}
 ```
@@ -280,10 +325,15 @@ DELETE /sellers/{id}
 **`200 OK`**
 
 <тело отсутствует>
+</details>
+</details>
 
 ## Транзакции
+<details>
 
 ### 1. Список всех транзакций
+<details>
+
 ```
 GET /transactions
 ```
@@ -309,8 +359,11 @@ GET /transactions
 | `amount`          | Сумма транзакции                   | numeric  |
 | `paymentType`     | Тип оплаты                         | string   |
 | `transactionDate` | Дата и время совершения транзакции | datetime |
+</details>
 
 ### 2. Инфо о конкретной транзакции
+<details>
+
 ```
 GET /transactions/{id}
 ```
@@ -334,6 +387,7 @@ GET /transactions/{id}
   }
 }
 ```
+
 #### Ответ 2. Транзакции с таким id не существует
 **`404 NOT FOUND`**
 ```json
@@ -343,8 +397,11 @@ GET /transactions/{id}
   "details": []
 }
 ```
+</details>
 
 ### 3. Создать новую транзакцию
+<details>
+
 ```
 POST /transactions
 ```
@@ -413,8 +470,11 @@ POST /transactions
   "details": []
 }
 ```
+</details>
 
 ### 4. Все транзакции продавца
+<details>
+
 ```
 GET /sellers/{id}transactions
 ```
@@ -442,10 +502,15 @@ GET /sellers/{id}transactions
   "details": []
 }
 ```
+</details>
+</details>
 
 ## Аналитика
+<details>
 
 ### Получить самого продуктивного продавца
+<details>
+
 Вывести самого продуктивного продавца в рамках дня, месяцы, квартала, года (самый
 продуктивный, тот у которого сумма всех транзакции больше всех других продавцов).
 В ответ может попасть несколько продавцов (если их суммы одинаковые)
@@ -473,8 +538,11 @@ GET /analytics/top-1-sellers?period=
 | Поле    | Описание                       | Тип     |
 |---------|--------------------------------|---------|
 | `total` | Сумма всех транзакций продавца | numeric |
+</details>
 
 ### Получить список продавцов с суммой меньше указанной
+<details>
+
 Вывести список продавцов, у которых сумма всех транзакции за выбранный период
 меньше переданного параметра суммы
 ```
@@ -500,3 +568,5 @@ GET /analytics/sellers-below-threhold?from={}?to={}?threshold={}
   ]
 }
 ```
+</details>
+</details>
