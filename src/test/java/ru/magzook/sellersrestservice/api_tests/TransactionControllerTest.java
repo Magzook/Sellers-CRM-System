@@ -14,7 +14,7 @@ public class TransactionControllerTest extends BaseIntegrationTest {
 
     @Test
     void createTransaction_success() throws Exception {
-        int sellerId = crudHelper.createSeller("Bob", "bob@mail.com");
+        int sellerId = createHelper.createSeller("Bob", "bob@mail.com");
         BigDecimal amount = new BigDecimal("100.55");
         PaymentType paymentType = PaymentType.CASH;
         httpRequestHelper.post(TRANSACTIONS, bodyHelper.makeTransactionBody(amount, paymentType, sellerId))
@@ -54,11 +54,11 @@ public class TransactionControllerTest extends BaseIntegrationTest {
     void getTransaction_withSellerInfo() throws Exception {
         String sellerName = "Bob";
         String sellerEmail = "bob@mail.com";
-        int sellerId = crudHelper.createSeller(sellerName, sellerEmail);
+        int sellerId = createHelper.createSeller(sellerName, sellerEmail);
 
         BigDecimal amount = new BigDecimal("100.55");
         PaymentType paymentType = PaymentType.CARD;
-        long transactionId = crudHelper.createTransaction(amount, paymentType, sellerId);
+        long transactionId = createHelper.createTransaction(amount, paymentType, sellerId);
 
         httpRequestHelper.get(transactionsSlashId(transactionId))
                 .andExpect(status().isOk())
@@ -74,10 +74,10 @@ public class TransactionControllerTest extends BaseIntegrationTest {
 
     @Test
     void getTransactionsBySeller_success() throws Exception {
-        int sellerId = crudHelper.createSeller("Bob", "bob@mail.com");
-        crudHelper.createTransaction(new BigDecimal("100"), PaymentType.CASH, sellerId);
-        crudHelper.createTransaction(new BigDecimal("200"), PaymentType.CARD, sellerId);
-        crudHelper.createTransaction(new BigDecimal("100"), PaymentType.TRANSFER, sellerId);
+        int sellerId = createHelper.createSeller("Bob", "bob@mail.com");
+        createHelper.createTransaction(new BigDecimal("100"), PaymentType.CASH, sellerId);
+        createHelper.createTransaction(new BigDecimal("200"), PaymentType.CARD, sellerId);
+        createHelper.createTransaction(new BigDecimal("100"), PaymentType.TRANSFER, sellerId);
 
         httpRequestHelper.get(sellersSlashIdSlashTransactions(sellerId))
                 .andExpect(status().isOk())
@@ -86,10 +86,10 @@ public class TransactionControllerTest extends BaseIntegrationTest {
 
     @Test
     void deleteSeller_cascadeDeletesTransactions() throws Exception {
-        int sellerId = crudHelper.createSeller("Bob", "bob@mail.com");
-        crudHelper.createTransaction(new BigDecimal("100"), PaymentType.CASH, sellerId);
-        crudHelper.createTransaction(new BigDecimal("200"), PaymentType.CARD, sellerId);
-        crudHelper.createTransaction(new BigDecimal("100"), PaymentType.TRANSFER, sellerId);
+        int sellerId = createHelper.createSeller("Bob", "bob@mail.com");
+        createHelper.createTransaction(new BigDecimal("100"), PaymentType.CASH, sellerId);
+        createHelper.createTransaction(new BigDecimal("200"), PaymentType.CARD, sellerId);
+        createHelper.createTransaction(new BigDecimal("100"), PaymentType.TRANSFER, sellerId);
 
         httpRequestHelper.delete(sellersSlashId(sellerId))
                 .andExpect(status().isOk());
@@ -106,7 +106,7 @@ public class TransactionControllerTest extends BaseIntegrationTest {
     }
 
     private void createTransaction_InvalidAmount(BigDecimal amount, String detail) throws Exception {
-        int sellerId = crudHelper.createSeller("Bob", "bob@mail.com");
+        int sellerId = createHelper.createSeller("Bob", "bob@mail.com");
 
         var response = httpRequestHelper.post(
                 TRANSACTIONS,

@@ -28,13 +28,13 @@ public class AnalyticsControllerTest extends BaseIntegrationTest {
     
     @Test
     void getTopSellers_singleWinner() throws Exception {
-        int aliceId = crudHelper.createSeller("Alice", "alice@mail.com");
-        int bobId = crudHelper.createSeller("Bob", "bob@mail.com");
-        crudHelper.createTransaction(new BigDecimal("1000"), PaymentType.CASH, aliceId);
-        crudHelper.createTransaction(new BigDecimal("500"), PaymentType.CASH, aliceId);
-        crudHelper.createTransaction(new BigDecimal("30"), PaymentType.CARD, bobId);
-        crudHelper.createTransaction(new BigDecimal("20"), PaymentType.CARD, bobId);
-        crudHelper.createTransaction(new BigDecimal("300"), PaymentType.CARD, bobId);
+        int aliceId = createHelper.createSeller("Alice", "alice@mail.com");
+        int bobId = createHelper.createSeller("Bob", "bob@mail.com");
+        createHelper.createTransaction(new BigDecimal("1000"), PaymentType.CASH, aliceId);
+        createHelper.createTransaction(new BigDecimal("500"), PaymentType.CASH, aliceId);
+        createHelper.createTransaction(new BigDecimal("30"), PaymentType.CARD, bobId);
+        createHelper.createTransaction(new BigDecimal("20"), PaymentType.CARD, bobId);
+        createHelper.createTransaction(new BigDecimal("300"), PaymentType.CARD, bobId);
 
         mockMvc.perform(get(TOP_1_SELLERS).param("period", "DAY"))
                 .andExpect(status().isOk())
@@ -45,12 +45,12 @@ public class AnalyticsControllerTest extends BaseIntegrationTest {
 
     @Test
     void getTopSellers_tiedWinners() throws Exception {
-        int aliceId = crudHelper.createSeller("Alice", "alice@mail.com");
-        int bobId = crudHelper.createSeller("Bob", "bob@mail.com");
-        crudHelper.createTransaction(new BigDecimal("10000"), PaymentType.CASH, aliceId);
-        crudHelper.createTransaction(new BigDecimal("7000"), PaymentType.CASH, aliceId);
-        crudHelper.createTransaction(new BigDecimal("5000"), PaymentType.CARD, bobId);
-        crudHelper.createTransaction(new BigDecimal("12000"), PaymentType.CARD, bobId);
+        int aliceId = createHelper.createSeller("Alice", "alice@mail.com");
+        int bobId = createHelper.createSeller("Bob", "bob@mail.com");
+        createHelper.createTransaction(new BigDecimal("10000"), PaymentType.CASH, aliceId);
+        createHelper.createTransaction(new BigDecimal("7000"), PaymentType.CASH, aliceId);
+        createHelper.createTransaction(new BigDecimal("5000"), PaymentType.CARD, bobId);
+        createHelper.createTransaction(new BigDecimal("12000"), PaymentType.CARD, bobId);
 
         mockMvc.perform(get(TOP_1_SELLERS).param("period", "DAY"))
                 .andExpect(status().isOk())
@@ -62,7 +62,7 @@ public class AnalyticsControllerTest extends BaseIntegrationTest {
 
     @Test
     void getTopSellers_noTransactions_returnsEmptyList() throws Exception {
-        crudHelper.createSeller("Alice", "alice@mail.com");
+        createHelper.createSeller("Alice", "alice@mail.com");
 
         mockMvc.perform(get(TOP_1_SELLERS).param("period", "DAY"))
                 .andExpect(status().isOk())
@@ -72,8 +72,8 @@ public class AnalyticsControllerTest extends BaseIntegrationTest {
     @ParameterizedTest
     @EnumSource(TimePeriod.class)
     void getTopSellers_allPeriods_return200(TimePeriod period) throws Exception {
-        int aliceId = crudHelper.createSeller("Alice", "alice@mail.com");
-        crudHelper.createTransaction(new BigDecimal("10000"), PaymentType.CASH, aliceId);
+        int aliceId = createHelper.createSeller("Alice", "alice@mail.com");
+        createHelper.createTransaction(new BigDecimal("10000"), PaymentType.CASH, aliceId);
 
         mockMvc.perform(get(TOP_1_SELLERS).param("period", period.name()))
                 .andExpect(status().isOk());
@@ -95,12 +95,12 @@ public class AnalyticsControllerTest extends BaseIntegrationTest {
             LocalDateTime insidePeriod,
             LocalDateTime outsidePeriod) throws Exception {
 
-        int aliceId = crudHelper.createSeller("Alice", "alice@mail.com");
-        int bobId = crudHelper.createSeller("Bob", "bob@mail.com");
+        int aliceId = createHelper.createSeller("Alice", "alice@mail.com");
+        int bobId = createHelper.createSeller("Bob", "bob@mail.com");
 
-        crudHelper.createTransactionWithDate(new BigDecimal("10000"), PaymentType.CASH, aliceId, insidePeriod);
-        crudHelper.createTransactionWithDate(new BigDecimal("5000"), PaymentType.CASH, bobId, insidePeriod);
-        crudHelper.createTransactionWithDate(new BigDecimal("99999"), PaymentType.CASH, bobId, outsidePeriod);
+        createHelper.createTransactionWithDate(new BigDecimal("10000"), PaymentType.CASH, aliceId, insidePeriod);
+        createHelper.createTransactionWithDate(new BigDecimal("5000"), PaymentType.CASH, bobId, insidePeriod);
+        createHelper.createTransactionWithDate(new BigDecimal("99999"), PaymentType.CASH, bobId, outsidePeriod);
 
         mockMvc.perform(get(TOP_1_SELLERS).param("period", period.name()))
                 .andExpect(status().isOk())
@@ -121,10 +121,10 @@ public class AnalyticsControllerTest extends BaseIntegrationTest {
 
     @Test
     void getSellersBelowThreshold_success() throws Exception {
-        int aliceId = crudHelper.createSeller("Alice", "alice@mail.com");
-        int bobId = crudHelper.createSeller("Bob", "bob@mail.com");
-        crudHelper.createTransaction(new BigDecimal("3000"), PaymentType.CASH, aliceId);
-        crudHelper.createTransaction(new BigDecimal("7000"), PaymentType.CARD, bobId);
+        int aliceId = createHelper.createSeller("Alice", "alice@mail.com");
+        int bobId = createHelper.createSeller("Bob", "bob@mail.com");
+        createHelper.createTransaction(new BigDecimal("3000"), PaymentType.CASH, aliceId);
+        createHelper.createTransaction(new BigDecimal("7000"), PaymentType.CARD, bobId);
 
         mockMvc.perform(get(SELLERS_BELOW_THRESHOLD)
                         .param("from", "2000-01-01 00:00:00")
@@ -138,10 +138,10 @@ public class AnalyticsControllerTest extends BaseIntegrationTest {
 
     @Test
     void getSellersBelowThreshold_allMatch() throws Exception {
-        int aliceId = crudHelper.createSeller("Alice", "alice@mail.com");
-        int bobId = crudHelper.createSeller("Bob", "bob@mail.com");
-        crudHelper.createTransaction(new BigDecimal("1000"), PaymentType.CASH, aliceId);
-        crudHelper.createTransaction(new BigDecimal("2000"), PaymentType.CARD, bobId);
+        int aliceId = createHelper.createSeller("Alice", "alice@mail.com");
+        int bobId = createHelper.createSeller("Bob", "bob@mail.com");
+        createHelper.createTransaction(new BigDecimal("1000"), PaymentType.CASH, aliceId);
+        createHelper.createTransaction(new BigDecimal("2000"), PaymentType.CARD, bobId);
 
         mockMvc.perform(get(SELLERS_BELOW_THRESHOLD)
                         .param("from", "2000-01-01 00:00:00")
@@ -154,8 +154,8 @@ public class AnalyticsControllerTest extends BaseIntegrationTest {
 
     @Test
     void getSellersBelowThreshold_noneMatch_returnsEmptyList() throws Exception {
-        int aliceId = crudHelper.createSeller("Alice", "alice@mail.com");
-        crudHelper.createTransaction(new BigDecimal("10000"), PaymentType.CASH, aliceId);
+        int aliceId = createHelper.createSeller("Alice", "alice@mail.com");
+        createHelper.createTransaction(new BigDecimal("10000"), PaymentType.CASH, aliceId);
 
         mockMvc.perform(get(SELLERS_BELOW_THRESHOLD)
                         .param("from", "2026-01-01 00:00:00")
@@ -179,15 +179,15 @@ public class AnalyticsControllerTest extends BaseIntegrationTest {
 
     @Test
     void getSellersBelowThreshold_onlyTransactionsFromPeriodCounted() throws Exception {
-        int aliceId = crudHelper.createSeller("Alice", "alice@mail.com");
-        int bobId = crudHelper.createSeller("Bob", "bob@mail.com");
+        int aliceId = createHelper.createSeller("Alice", "alice@mail.com");
+        int bobId = createHelper.createSeller("Bob", "bob@mail.com");
 
         LocalDateTime thisYear = LocalDateTime.now().withDayOfYear(1);
         LocalDateTime lastYear = thisYear.minusYears(1);
 
-        crudHelper.createTransactionWithDate(new BigDecimal("3000"), PaymentType.CASH, aliceId, thisYear);
-        crudHelper.createTransactionWithDate(new BigDecimal("7000"), PaymentType.CASH, bobId, thisYear);
-        crudHelper.createTransactionWithDate(new BigDecimal("99999"), PaymentType.CASH, aliceId, lastYear);
+        createHelper.createTransactionWithDate(new BigDecimal("3000"), PaymentType.CASH, aliceId, thisYear);
+        createHelper.createTransactionWithDate(new BigDecimal("7000"), PaymentType.CASH, bobId, thisYear);
+        createHelper.createTransactionWithDate(new BigDecimal("99999"), PaymentType.CASH, aliceId, lastYear);
 
         mockMvc.perform(get(SELLERS_BELOW_THRESHOLD)
                         .param("from", thisYear.format(dateTimeFormatter))

@@ -49,7 +49,7 @@ public class SellerControllerTest extends BaseIntegrationTest {
         String[] contactInfos = {"alice@mail.com", "bob@mail.com", "charlie@mail.com"};
         int count = 3;
         for (int i = 0; i < count; i++) {
-            crudHelper.createSeller(names[i], contactInfos[i]);
+            createHelper.createSeller(names[i], contactInfos[i]);
         }
         httpRequestHelper.get(SELLERS)
                 .andExpect(status().isOk())
@@ -64,7 +64,7 @@ public class SellerControllerTest extends BaseIntegrationTest {
     void findSellerById_success() throws Exception {
         String name = "Alice";
         String contactInfo = "alice@mail.com";
-        int id = crudHelper.createSeller(name, contactInfo);
+        int id = createHelper.createSeller(name, contactInfo);
 
         httpRequestHelper.get(sellersSlashId(id))
                 .andExpect(status().isOk())
@@ -98,7 +98,7 @@ public class SellerControllerTest extends BaseIntegrationTest {
         String oldContactInfo = "schrader@mail.com";
         String newName = "Henry R";
         String newContactInfo = "henryrschrader@mail.com";
-        int id = crudHelper.createSeller(oldName, oldContactInfo);
+        int id = createHelper.createSeller(oldName, oldContactInfo);
 
         httpRequestHelper.put(sellersSlashId(id), bodyHelper.makeSellerBody(newName, newContactInfo))
                 .andExpect(status().isOk())
@@ -110,21 +110,21 @@ public class SellerControllerTest extends BaseIntegrationTest {
 
     @Test
     void updateSeller_nameIsBlank_returns400() throws Exception {
-        int id = crudHelper.createSeller("OldName", "old@mail.com");
+        int id = createHelper.createSeller("OldName", "old@mail.com");
         var response = httpRequestHelper.put(sellersSlashId(id), bodyHelper.makeSellerBody("  ", "john@mail.com"));
         expectHelper.expectValidationFailed(response, ERROR_NAME_EMPTY);
     }
 
     @Test
     void updateSeller_nameIsTooLong_returns400() throws Exception {
-        int id = crudHelper.createSeller("OldName", "old@mail.com");
+        int id = createHelper.createSeller("OldName", "old@mail.com");
         var response = httpRequestHelper.put(sellersSlashId(id), bodyHelper.makeSellerBody("AAAAAAAAAAAAAAAAA", "john@mail.com"));
         expectHelper.expectValidationFailed(response, ERROR_NAME_TOO_LONG);
     }
 
     @Test
     void updateSeller_contactInfoIsBlank_returns400() throws Exception {
-        int id = crudHelper.createSeller("OldName", "old@mail.com");
+        int id = createHelper.createSeller("OldName", "old@mail.com");
         var response = httpRequestHelper.put(sellersSlashId(id), bodyHelper.makeSellerBody("newName", ""));
         expectHelper.expectValidationFailed(response, ERROR_CONTACT_INFO_EMPTY);
     }
@@ -138,7 +138,7 @@ public class SellerControllerTest extends BaseIntegrationTest {
 
     @Test
     void deleteSeller_success() throws Exception {
-        int id = crudHelper.createSeller("ToDelete", "del@mail.com");
+        int id = createHelper.createSeller("ToDelete", "del@mail.com");
 
         httpRequestHelper.delete(sellersSlashId(id))
                 .andExpect(status().isOk());

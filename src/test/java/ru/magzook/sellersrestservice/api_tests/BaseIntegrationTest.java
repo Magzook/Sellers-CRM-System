@@ -7,7 +7,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.magzook.sellersrestservice.api_tests.helpers.BodyHelper;
-import ru.magzook.sellersrestservice.api_tests.helpers.CrudHelper;
+import ru.magzook.sellersrestservice.api_tests.helpers.CreateHelper;
 import ru.magzook.sellersrestservice.api_tests.helpers.ExpectHelper;
 import ru.magzook.sellersrestservice.api_tests.helpers.HttpRequestHelper;
 import ru.magzook.sellersrestservice.repository.SellerRepository;
@@ -22,7 +22,7 @@ public abstract class BaseIntegrationTest {
     protected MockMvc mockMvc;
 
     @Autowired
-    protected CrudHelper crudHelper;
+    protected CreateHelper createHelper;
 
     @Autowired
     protected BodyHelper bodyHelper;

@@ -13,7 +13,7 @@ import static ru.magzook.sellersrestservice.api_tests.helpers.UrlConstructor.SEL
 import static ru.magzook.sellersrestservice.api_tests.helpers.UrlConstructor.TRANSACTIONS;
 
 @Component
-public class CrudHelper {
+public class CreateHelper {
 
     @Autowired
     private ObjectMapper objectMapper;
